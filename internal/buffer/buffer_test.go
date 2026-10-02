@@ -2,6 +2,8 @@ package buffer
 
 import (
 	"math/rand"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -94,6 +96,26 @@ func check(t *testing.T, before []string, operations []operation, after []string
 	checkText(after)
 
 	b.Close()
+}
+
+func TestNewBufferFromFileDetectsJavaFileType(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "Main.java")
+	if err := os.WriteFile(path, []byte("class Main {}\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	b, err := NewBufferFromFile(path, BTDefault)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer b.Close()
+
+	if got := b.FileType(); got != "java" {
+		t.Fatalf("filetype = %q, want java", got)
+	}
+	if b.SyntaxDef == nil {
+		t.Fatal("Java syntax definition was not loaded")
+	}
 }
 
 const maxLineLength = 200

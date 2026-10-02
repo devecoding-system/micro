@@ -96,6 +96,11 @@ quotes here but these are not necessary when entering the command in micro.
 * `hsplit ['filename']`: same as `vsplit` but opens a horizontal split instead
    of a vertical split.
 
+* `tree`: toggles a file tree rooted at the current working directory in a
+   left pane. Press `Enter` on a directory to expand or collapse it, or on a
+   file to open it. Select `[..] ../` and press `Enter` to navigate to the parent
+   directory; `Left` on a top-level entry is a shortcut. Press `F5` to refresh.
+
 * `tab ['filename']`: opens the given file in a new tab. If no filename
    is provided, a tab is opened with an empty buffer. If multiple files are
    provided (separated via ` `) they are opened all as tabs.

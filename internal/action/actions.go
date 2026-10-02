@@ -72,7 +72,11 @@ func (h *BufPane) MousePress(e *tcell.EventMouse) bool {
 		h.Cursor = h.Buf.GetActiveCursor()
 		h.Cursor.Loc = mouseLoc
 	}
-	if time.Since(h.lastClickTime)/time.Millisecond < config.DoubleClickThreshold && (mouseLoc.X == h.lastLoc.X && mouseLoc.Y == h.lastLoc.Y) {
+	sameClick := mouseLoc.X == h.lastLoc.X && mouseLoc.Y == h.lastLoc.Y
+	if h.fileTree != nil {
+		sameClick = mouseLoc.Y == h.lastLoc.Y
+	}
+	if time.Since(h.lastClickTime)/time.Millisecond < config.DoubleClickThreshold && sameClick {
 		if h.DoubleClick {
 			// Triple click
 			h.lastClickTime = time.Now()
@@ -105,6 +109,9 @@ func (h *BufPane) MousePress(e *tcell.EventMouse) bool {
 	h.Cursor.StoreVisualX()
 	h.lastLoc = mouseLoc
 	h.Relocate()
+	if h.fileTree != nil && h.DoubleClick {
+		return h.FileTreeOpen()
+	}
 	return true
 }
 

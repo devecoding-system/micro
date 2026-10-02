@@ -244,8 +244,9 @@ type BufPane struct {
 	// based on selection (false for selection, true for word)
 	multiWord bool
 
-	splitID uint64
-	tab     *Tab
+	splitID  uint64
+	tab      *Tab
+	fileTree *FileTree
 
 	// remember original location of a search in case the search is canceled
 	searchOrig buffer.Loc
@@ -760,6 +761,10 @@ var BufKeyActions = map[string]BufKeyAction{
 	"SelectToParagraphPrevious": (*BufPane).SelectToParagraphPrevious,
 	"SelectToParagraphNext":     (*BufPane).SelectToParagraphNext,
 	"InsertNewline":             (*BufPane).InsertNewline,
+	"FileTreeOpen":              (*BufPane).FileTreeOpen,
+	"FileTreeLeft":              (*BufPane).FileTreeLeft,
+	"FileTreeRight":             (*BufPane).FileTreeRight,
+	"FileTreeRefresh":           (*BufPane).FileTreeRefresh,
 	"Backspace":                 (*BufPane).Backspace,
 	"Delete":                    (*BufPane).Delete,
 	"InsertTab":                 (*BufPane).InsertTab,

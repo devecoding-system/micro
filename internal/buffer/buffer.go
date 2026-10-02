@@ -61,6 +61,8 @@ var (
 	// BTStdout is a buffer that only writes to stdout
 	// when closed
 	BTStdout = BufType{6, false, true, true}
+	// BTFileTree is a read-only buffer for the file tree pane
+	BTFileTree = BufType{7, true, true, false}
 )
 
 // SharedBuffer is a struct containing info that is shared among buffers
@@ -937,6 +939,33 @@ func (b *Buffer) UpdateRules() {
 	}
 
 	if syntaxFile == "" {
+		if syntaxFile == "" && len(fnameMatches) == 0 && len(headerMatches) == 0 {
+			for _, f := range config.ListRuntimeFiles(config.RTSyntax) {
+				if f.Name() == "default" {
+					continue
+				}
+				data, err := f.Data()
+				if err != nil {
+					continue
+				}
+				header, err = highlight.MakeHeaderYaml(data)
+				if err != nil {
+					continue
+				}
+				if ft == "unknown" || ft == "" {
+					if header.MatchFileName(b.Path) {
+						fnameMatches = append(fnameMatches, syntaxFileInfo{header, f.Name(), nil})
+					}
+					if len(fnameMatches) == 0 && header.MatchFileHeader(b.lines[0].data) {
+						headerMatches = append(headerMatches, syntaxFileInfo{header, f.Name(), nil})
+					}
+				} else if header.FileType == ft {
+					syntaxFile = f.Name()
+					break
+				}
+			}
+		}
+
 		matches := fnameMatches
 		if len(matches) == 0 {
 			matches = headerMatches
